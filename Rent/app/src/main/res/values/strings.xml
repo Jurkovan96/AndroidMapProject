@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Rent</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="hideholder">HideHolder</string>
+    <string name="seedetails">SeeDetails</string>
+    <string name="locationimage">LocationImage</string>
+</resources>

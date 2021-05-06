@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "299092078069",
+    "project_id": "rent-efab2",
+    "storage_bucket": "rent-efab2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299092078069:android:31a757ed37d974866544bc",
+        "android_client_info": {
+          "package_name": "com.example.rent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "299092078069-5tvbckosq8il5ag64cgo3csj3o1ot037.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu1rk3CkE228gvODXsr23Gyym-QzVWXjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "299092078069-5tvbckosq8il5ag64cgo3csj3o1ot037.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
