@@ -1,6 +1,8 @@
 package com.example.rent;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -32,10 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,6 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private SlideshowAdapter mSlideshowAdapter;
 
+    private Location mCurrentItemReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLocationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
 
         mActivityMapsBinding.hideHolder.setOnClickListener(this);
+        mActivityMapsBinding.locationDetails.setOnClickListener(this);
 
         mLocationViewModel.getLocations().observe(this, locations -> {
             mLocations.clear();
@@ -88,6 +90,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // mMap.moveCamera(CameraUpdateFactory.newLatLng(custom));
         objectToMarkerConversion().forEach(markerOptions -> mMap.addMarker(markerOptions));
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(point -> {
+            mMap.addMarker(new MarkerOptions().position(point));
+        });
     }
 
 
@@ -117,9 +122,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mActivityMapsBinding.componentHolder.getVisibility() != View.VISIBLE) {
             mActivityMapsBinding.componentHolder.setVisibility(View.VISIBLE);
         }
+
+
         mActivityMapsBinding.locationName.setText(marker.getTitle());
         mLocations.forEach(location -> {
             if (location.getName().equals(marker.getTitle())) {
+                mCurrentItemReference = location;
                 final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
                 mSlideshowAdapter = new SlideshowAdapter(this, populateImageList(location));
                 viewPager_images.setAdapter(mSlideshowAdapter);
@@ -147,10 +155,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        if (mActivityMapsBinding.componentHolder.getVisibility() == View.VISIBLE) {
-            mActivityMapsBinding.componentHolder.setVisibility(View.GONE);
+        switch (v.getId()) {
+            case R.id.hideHolder:
+                if (mActivityMapsBinding.componentHolder.isShown()) {
+                    mActivityMapsBinding.componentHolder.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.locationDetails:
+                Intent goToLocationDetails = new Intent(this, ReservationActivity.class);
+                if (mCurrentItemReference != null) {
+                    goToLocationDetails.putExtra("CURRENT_ID", mCurrentItemReference.getId());
+                    startActivity(goToLocationDetails);
+                } else {
+                    Log.d(TAG, "null reference on click!");
+                }
+                break;
+
         }
     }
 

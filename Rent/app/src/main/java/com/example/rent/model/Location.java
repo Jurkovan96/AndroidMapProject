@@ -1,4 +1,4 @@
-package com.example.rent.model;
+ package com.example.rent.model;
 
 import android.widget.ImageView;
 

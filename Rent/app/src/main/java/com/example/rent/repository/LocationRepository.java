@@ -45,4 +45,22 @@ public class LocationRepository {
     public void deleteLocation(Location location) {
         mFirebaseFirestore.collection(LOCATION_COLLECTION).document(location.getId()).delete();
     }
+
+    public MutableLiveData<Location> getLocationById(String location_id) {
+        MutableLiveData<Location> requestLocation = new MutableLiveData<>();
+        mFirebaseFirestore
+                .collection(LOCATION_COLLECTION)
+                .document(location_id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot != null) {
+                        Location location = documentSnapshot.toObject(Location.class);
+                        assert location != null;
+                        location.setId(documentSnapshot.getId());
+                        requestLocation.setValue(location);
+                    }
+                });
+        return requestLocation;
+
+    }
 }

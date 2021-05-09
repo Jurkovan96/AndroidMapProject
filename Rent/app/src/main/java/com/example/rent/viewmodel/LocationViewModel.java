@@ -30,4 +30,8 @@ public class LocationViewModel extends ViewModel {
     public void deleteLocation(Location location) {
         locationRepository.deleteLocation(location);
     }
+
+    public MutableLiveData<Location> getLocationById(String location_id) {
+        return locationRepository.getLocationById(location_id);
+    }
 }
