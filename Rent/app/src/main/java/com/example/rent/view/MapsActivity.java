@@ -1,4 +1,4 @@
-package com.example.rent;
+package com.example.rent.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,17 +9,26 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.rent.R;
 import com.example.rent.adapter.SlideshowAdapter;
 import com.example.rent.databinding.ActivityMapsBinding;
 import com.example.rent.model.Location;
@@ -82,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // mLocationViewModel.addLocation(new Location("Location1", "Desc1", "rev1", 47.157859, 27.594512));
     }
 
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -94,7 +105,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(point));
         });
     }
-
 
     private Set<MarkerOptions> objectToMarkerConversion() {
         Set<MarkerOptions> markerLocations = new HashSet<>();
@@ -119,16 +129,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (mActivityMapsBinding.componentHolder.getVisibility() != View.VISIBLE) {
+        if (mActivityMapsBinding.componentHolder.getVisibility() != View.VISIBLE
+                && locationIsValid(marker.getTitle())) {
             mActivityMapsBinding.componentHolder.setVisibility(View.VISIBLE);
         }
-
-
         mActivityMapsBinding.locationName.setText(marker.getTitle());
+        final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
+
         mLocations.forEach(location -> {
             if (location.getName().equals(marker.getTitle())) {
                 mCurrentItemReference = location;
-                final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
                 mSlideshowAdapter = new SlideshowAdapter(this, populateImageList(location));
                 viewPager_images.setAdapter(mSlideshowAdapter);
                 populateImageList(location);
@@ -148,11 +158,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void run() {
                         mHandler.post(mRunnable);
                     }
-                }, 4000, 4000);
+                }, 5000, 5000);
             }
         });
 
         return false;
+    }
+
+    private boolean locationIsValid(String title) {
+
+        return true;
     }
 
     @SuppressLint("NonConstantResourceId")

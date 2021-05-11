@@ -4,4 +4,22 @@
     <string name="hideholder">HideHolder</string>
     <string name="seedetails">SeeDetails</string>
     <string name="locationimage">LocationImage</string>
+    <string name="logo_image">imageLogo</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="register">Register</string>
+    <string name="enter_email">Enter email</string>
+    <string name="password_recovery">Recover password</string>
+    <string name="insert_email_address">Insert email address</string>
+    <string name="cancel">Cancel</string>
+    <string name="send_email">Sent email</string>
+    <string name="wrong_email_address">Wrong email address</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="enter_username">User name</string>
+    <string name="duplicated_value">Duplicated value</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="password">Password</string>
+    <string name="log_out">Log_out</string>
+    <string name="details">Details</string>
 </resources>

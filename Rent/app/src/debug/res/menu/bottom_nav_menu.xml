@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/delete_account_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_log_out"
+        android:title="@string/log_out"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/delete_product_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_map"
+        android:title="@string/details"
+        app:showAsAction="ifRoom" />
+</menu>

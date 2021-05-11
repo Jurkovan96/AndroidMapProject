@@ -1,4 +1,4 @@
-package com.example.rent;
+package com.example.rent.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.rent.R;
 import com.example.rent.databinding.ActivityCustomBinding;
 import com.example.rent.model.Location;
 import com.example.rent.viewmodel.LocationViewModel;
