@@ -34,4 +34,8 @@ public class LocationViewModel extends ViewModel {
     public MutableLiveData<Location> getLocationById(String location_id) {
         return locationRepository.getLocationById(location_id);
     }
+
+    public MutableLiveData<Set<String>> getLocationObjectName() {
+        return locationRepository.getLocationObjectName();
+    }
 }

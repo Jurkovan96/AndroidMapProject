@@ -1,6 +1,7 @@
 package com.example.rent.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,26 +10,20 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.rent.FireHelper;
 import com.example.rent.R;
+import com.example.rent.adapter.IconInteraction;
 import com.example.rent.adapter.SlideshowAdapter;
 import com.example.rent.databinding.ActivityMapsBinding;
 import com.example.rent.model.Location;
@@ -41,8 +36,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
@@ -54,8 +51,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String TAG = MapsActivity.class.getName();
 
     private GoogleMap mMap;
-
-    private Button button;
 
     private Set<Location> mLocations;
 
@@ -69,6 +64,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Location mCurrentItemReference;
 
+    private FirebaseAuth mFirebaseAuth;
+
+    private Set<String> mLocationObjects;
+
+    private IconInteraction mIconInteraction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +77,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mLocations = new HashSet<>();
+        mLocationObjects = new HashSet<>();
+        mFirebaseAuth = FireHelper.getInstanceOfAuth();
         mLocationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
-
+        initializeCustomToolBar();
         mActivityMapsBinding.hideHolder.setOnClickListener(this);
         mActivityMapsBinding.locationDetails.setOnClickListener(this);
 
@@ -88,10 +91,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMapFragment.getMapAsync(this);
         });
 
+        mLocationViewModel.getLocationObjectName().observe(this, strings -> {
+            mLocationObjects.clear();
+            mLocationObjects.addAll(strings);
+        });
         // mLocationViewModel.addLocation(new Location("Location1", "Desc1", "rev1", 47.157859, 27.594512));
     }
 
-
+    private void initializeCustomToolBar() {
+        mActivityMapsBinding.customToolBar.logout.setOnClickListener(v -> {
+            if (mFirebaseAuth.getCurrentUser() != null) {
+                mFirebaseAuth.signOut();
+                startActivity(new Intent(this, LoginActivity.class));
+                finishAffinity();
+            }
+        });
+        mActivityMapsBinding.customToolBar.profile.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -129,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (mActivityMapsBinding.componentHolder.getVisibility() != View.VISIBLE
+        if (!mActivityMapsBinding.componentHolder.isShown()
                 && locationIsValid(marker.getTitle())) {
             mActivityMapsBinding.componentHolder.setVisibility(View.VISIBLE);
         }
@@ -166,8 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private boolean locationIsValid(String title) {
-
-        return true;
+        return mLocationObjects.contains(title);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -202,4 +219,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return locationImages;
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

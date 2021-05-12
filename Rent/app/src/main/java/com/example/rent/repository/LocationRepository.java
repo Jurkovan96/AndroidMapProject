@@ -1,5 +1,6 @@
 package com.example.rent.repository;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.rent.FireHelper;
@@ -14,7 +15,7 @@ public class LocationRepository {
 
     private final String LOCATION_COLLECTION = "Locations";
 
-    private FirebaseFirestore mFirebaseFirestore;
+    private final FirebaseFirestore mFirebaseFirestore;
 
     public LocationRepository() {
         this.mFirebaseFirestore = FireHelper.getInstanceOfFirebase();
@@ -61,6 +62,24 @@ public class LocationRepository {
                     }
                 });
         return requestLocation;
+    }
 
+    public MutableLiveData<Set<String>> getLocationObjectName() {
+        MutableLiveData<Set<String>> requestLocation = new MutableLiveData<>();
+        mFirebaseFirestore
+                .collection(LOCATION_COLLECTION)
+                .addSnapshotListener((value, error) -> {
+                    Set<String> locations = new HashSet<String>();
+                    if (value != null) {
+                        for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
+                            Location location = documentSnapshot.toObject(Location.class);
+                            if (location != null && !location.getName().isEmpty()) {
+                                locations.add(location.getName());
+                            }
+                        }
+                    }
+                    requestLocation.setValue(locations);
+                });
+        return requestLocation;
     }
 }

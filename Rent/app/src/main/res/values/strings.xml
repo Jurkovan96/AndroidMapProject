@@ -22,4 +22,6 @@
     <string name="password">Password</string>
     <string name="log_out">Log_out</string>
     <string name="details">Details</string>
+    <string name="logout">logout</string>
+    <string name="profile">profile_menu</string>
 </resources>

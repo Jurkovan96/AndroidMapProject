@@ -66,6 +66,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     public class ClickHandler {
 
@@ -117,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     }
 
                                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                                    finish();
                                 }
                             });
 
@@ -156,7 +161,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         updatePasswordAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
             String editTextValue = typeEmailEditText.getText().toString().trim();
             if (!editTextValue.equals("")) {
-                //the email is sent and the dialog is dismissed only when the field is not empty
                 mFirebaseAuth.sendPasswordResetEmail(editTextValue)
                         .addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, EMAIL_SENT,
                                 Toast.LENGTH_SHORT).show())
