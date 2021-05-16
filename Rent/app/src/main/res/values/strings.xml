@@ -24,4 +24,5 @@
     <string name="details">Details</string>
     <string name="logout">logout</string>
     <string name="profile">profile_menu</string>
+    <string name="categoryPicture">cate</string>
 </resources>

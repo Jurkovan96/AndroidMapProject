@@ -1,25 +1,40 @@
 package com.example.rent.repository;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.rent.FireHelper;
 import com.example.rent.model.Location;
+import com.example.rent.model.Terrain;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class LocationRepository {
 
+    public static final String TAG = LocationRepository.class.getName();
+
     private final String LOCATION_COLLECTION = "Locations";
+
+    public static final String TERRAIN_COLLECTION = "Terrains";
 
     private final FirebaseFirestore mFirebaseFirestore;
 
     public LocationRepository() {
         this.mFirebaseFirestore = FireHelper.getInstanceOfFirebase();
     }
+
 
     public MutableLiveData<Set<Location>> getAllLocations() {
         MutableLiveData<Set<Location>> listMutableLiveData = new MutableLiveData<>();

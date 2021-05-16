@@ -29,6 +29,8 @@
             android:id="@+id/componentHolder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/white"
+            android:isScrollContainer="true"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,21 +56,120 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="22sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Location Name" />
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/view_pager"
+            <TextView
+                android:id="@+id/current_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/locationName"
+                tools:text="Closed" />
+
+            <TextView
+                android:id="@+id/scheduler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/locationName"
+                app:layout_constraintStart_toEndOf="@+id/locationName"
+                app:layout_constraintTop_toTopOf="@+id/locationName"
+                tools:text="10-22" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/location_features"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/locationDetails"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/locationName" />
+                app:layout_constraintTop_toBottomOf="@+id/current_status">
+
+                <ImageButton
+                    android:id="@+id/location_football_terrain"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginVertical="5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_soccer_ball_variant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/location_basketball_terrain"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_basketball_ball"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_football_terrain"
+                    app:layout_constraintStart_toEndOf="@+id/location_football_terrain"
+                    app:layout_constraintTop_toTopOf="@+id/location_football_terrain" />
+
+                <ImageButton
+                    android:id="@+id/location_tennis_terrain"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_tennis"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_basketball_terrain"
+                    app:layout_constraintStart_toEndOf="@+id/location_basketball_terrain"
+                    app:layout_constraintTop_toTopOf="@+id/location_basketball_terrain" />
+
+                <ImageButton
+                    android:id="@+id/location_custom_terrain"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_mountain"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_tennis_terrain"
+                    app:layout_constraintStart_toEndOf="@+id/location_tennis_terrain"
+                    app:layout_constraintTop_toTopOf="@+id/location_tennis_terrain"
+                    tools:layout_editor_absoluteX="142dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ScrollView
+                android:id="@+id/location_description"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintBottom_toTopOf="@+id/locationDetails"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/location_features">
+
+                <TextView
+                    android:id="@+id/location_description_textView"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec diam lacus, pulvinar sed nulla fermentum, hendrerit viverra neque. Duis mattis a ipsum lobortis pretium. Duis suscipit elementum mauris, in bibendum sapien facilisis bibendum. Mauris vitae augue vel dui euismod dignissim quis nec ligula. Etiam blandit libero a ante aliquam pretium. Aliquam eget magna eget lorem rhoncus eleifend sit amet vitae metus. Etiam egestas condimentum tellus, ac tincidunt erat mattis vel. Quisque finibus purus at turpis dapibus, ac faucibus lorem varius. Duis enim nisl, ullamcorper vel auctor id, hendrerit sed risus." />
+
+
+            </ScrollView>
 
             <ImageButton
                 android:id="@+id/locationDetails"

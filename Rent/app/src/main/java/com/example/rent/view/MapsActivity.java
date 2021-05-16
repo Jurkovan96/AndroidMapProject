@@ -1,7 +1,6 @@
 package com.example.rent.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,17 +8,14 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
 
 import com.example.rent.FireHelper;
 import com.example.rent.R;
@@ -28,6 +24,7 @@ import com.example.rent.adapter.SlideshowAdapter;
 import com.example.rent.databinding.ActivityMapsBinding;
 import com.example.rent.model.Location;
 import com.example.rent.viewmodel.LocationViewModel;
+import com.example.rent.viewmodel.TerrainViewModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -39,11 +36,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -68,7 +63,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Set<String> mLocationObjects;
 
+    private TerrainViewModel mTerrainViewModel;
+
     private IconInteraction mIconInteraction;
+
+    boolean hasTennisTerrain;
+    boolean hasFootballTerrain;
+    boolean hasBasketBallTerrain;
+    boolean hasCustomTerrain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +82,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLocationObjects = new HashSet<>();
         mFirebaseAuth = FireHelper.getInstanceOfAuth();
         mLocationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+        mTerrainViewModel = new ViewModelProvider(this).get(TerrainViewModel.class);
         initializeCustomToolBar();
         mActivityMapsBinding.hideHolder.setOnClickListener(this);
         mActivityMapsBinding.locationDetails.setOnClickListener(this);
 
+
         mLocationViewModel.getLocations().observe(this, locations -> {
             mLocations.clear();
+            locations.forEach(location -> mTerrainViewModel
+                    .getTerrainsByLocationId(location.getId())
+                    .observe(this, location::setTerrains)
+            );
             mLocations.addAll(locations);
-            Log.d(TAG, "The list of the locations: " + mLocations.size());
+            addTerrainsToLocations(locations);
             mMapFragment.getMapAsync(this);
         });
 
@@ -96,6 +104,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLocationObjects.addAll(strings);
         });
         // mLocationViewModel.addLocation(new Location("Location1", "Desc1", "rev1", 47.157859, 27.594512));
+    }
+
+    private void addTerrainsToLocations(Set<Location> locations) {
+        locations.forEach(location -> {
+            mTerrainViewModel
+                    .getTerrainsByLocationId(location.getId())
+                    .observe(this, location::setTerrains);
+        });
     }
 
     private void initializeCustomToolBar() {
@@ -126,9 +142,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Set<MarkerOptions> objectToMarkerConversion() {
         Set<MarkerOptions> markerLocations = new HashSet<>();
-        mLocations.forEach(location -> markerLocations.add(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(location.getName())));
+        mLocations.forEach(location -> {
+            markerLocations.add(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title(location.getName()));
+        });
         return markerLocations;
     }
 
@@ -147,38 +165,90 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        hasFootballTerrain = false;
+        hasBasketBallTerrain = false;
+        hasTennisTerrain = false;
+        hasCustomTerrain = false;
+
+        List<String> terrainsType = new ArrayList<>();
         if (!mActivityMapsBinding.componentHolder.isShown()
                 && locationIsValid(marker.getTitle())) {
             mActivityMapsBinding.componentHolder.setVisibility(View.VISIBLE);
         }
-        mActivityMapsBinding.locationName.setText(marker.getTitle());
-        final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
 
+        mActivityMapsBinding.locationName.setText(marker.getTitle());
+        mActivityMapsBinding.locationDescriptionTextView.setText("");
         mLocations.forEach(location -> {
             if (location.getName().equals(marker.getTitle())) {
                 mCurrentItemReference = location;
-                mSlideshowAdapter = new SlideshowAdapter(this, populateImageList(location));
-                viewPager_images.setAdapter(mSlideshowAdapter);
-                populateImageList(location);
-                Handler mHandler = new Handler();
-                Runnable mRunnable = () -> {
-                    int item = viewPager_images.getCurrentItem();
-                    if (item == mSlideshowAdapter.mImages.size() - 1) {
-                        item = 0;
-                    } else {
-                        item++;
-                    }
-                    viewPager_images.setCurrentItem(item, true);
-                };
-                Timer mTimer = new Timer();
-                mTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mHandler.post(mRunnable);
-                    }
-                }, 5000, 5000);
+                mActivityMapsBinding.locationDescriptionTextView.setText(location.getDescription());
+                location.getTerrains().forEach(terrain -> {
+                    terrainsType.add(terrain.getTerrainType());
+                });
             }
         });
+        if (terrainsType.contains("FOOTBALL")) {
+            hasFootballTerrain = true;
+        }
+        if (terrainsType.contains("BASKETBALL")) {
+            hasBasketBallTerrain = true;
+        }
+        if (terrainsType.contains("TENNIS")) {
+            hasTennisTerrain = true;
+        }
+        if (terrainsType.contains("CUSTOM")) {
+            hasCustomTerrain = true;
+        }
+
+        if (!hasFootballTerrain) {
+            mActivityMapsBinding.locationFootballTerrain.setVisibility(View.GONE);
+        } else {
+            mActivityMapsBinding.locationFootballTerrain.setVisibility(View.VISIBLE);
+        }
+        if (!hasBasketBallTerrain) {
+            mActivityMapsBinding.locationBasketballTerrain.setVisibility(View.GONE);
+        } else {
+            mActivityMapsBinding.locationBasketballTerrain.setVisibility(View.VISIBLE);
+        }
+        if (!hasTennisTerrain) {
+            mActivityMapsBinding.locationTennisTerrain.setVisibility(View.GONE);
+        } else {
+            mActivityMapsBinding.locationTennisTerrain.setVisibility(View.VISIBLE);
+        }
+        if (!hasCustomTerrain) {
+            mActivityMapsBinding.locationCustomTerrain.setVisibility(View.GONE);
+        } else {
+            mActivityMapsBinding.locationCustomTerrain.setVisibility(View.VISIBLE);
+        }
+
+
+        //final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
+
+//        mLocations.forEach(location -> {
+//            if (location.getName().equals(marker.getTitle())) {
+//                mCurrentItemReference = location;
+//                mSlideshowAdapter = new SlideshowAdapter(this, populateImageList(location));
+//                viewPager_images.setAdapter(mSlideshowAdapter);
+//                populateImageList(location);
+//                Handler mHandler = new Handler();
+//                Runnable mRunnable = () -> {
+//                    int item = viewPager_images.getCurrentItem();
+//                    if (item == mSlideshowAdapter.mImages.size() - 1) {
+//                        item = 0;
+//                    } else {
+//                        item++;
+//                    }
+//                    viewPager_images.setCurrentItem(item, true);
+//                };
+//                Timer mTimer = new Timer();
+//                mTimer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        mHandler.post(mRunnable);
+//                    }
+//                }, 5000, 5000);
+//            }
+//        });
 
         return false;
     }

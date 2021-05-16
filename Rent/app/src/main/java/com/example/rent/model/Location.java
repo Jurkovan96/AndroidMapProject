@@ -1,4 +1,4 @@
- package com.example.rent.model;
+package com.example.rent.model;
 
 import android.widget.ImageView;
 
@@ -34,6 +34,8 @@ public class Location implements Serializable {
 
     private double longitude;
 
+    private List<Terrain> terrains = new ArrayList<>();
+
     public Location(String name, String description, String review, double latitude, double longitude) {
         this.name = name;
         this.description = description;
@@ -41,6 +43,15 @@ public class Location implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.imageList = new ArrayList<>();
+        this.terrains = new ArrayList<>();
+    }
+
+    public List<Terrain> getTerrains() {
+        return terrains;
+    }
+
+    public void setTerrains(List<Terrain> terrains) {
+        this.terrains = terrains;
     }
 
     public double getLatitude() {
