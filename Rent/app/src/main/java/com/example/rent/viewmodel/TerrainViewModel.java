@@ -20,4 +20,8 @@ public class TerrainViewModel extends ViewModel {
         return terrainRepository.getTerrainsByLocationId(locationId);
     }
 
+//    public MutableLiveData<List<Terrain>> getTerrainsByLocationId2(String locationId) {
+//        return terrainRepository.getTerrainsByLocationId2(locationId);
+//    }
+
 }

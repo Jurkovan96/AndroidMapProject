@@ -12,6 +12,7 @@ import com.google.firebase.firestore.Exclude;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -25,6 +26,49 @@ public class Terrain implements Serializable {
     private String terrainType;
 
     private String imagePath;
+
+    private String description;
+
+    private String hours;
+
+    private int price;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getHours() {
+        return hours;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    @Exclude
+    private List<Reservation> reservations;
+
+    @Exclude
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    @Exclude
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
 
     public Terrain() {
     }
@@ -69,13 +113,13 @@ public class Terrain implements Serializable {
     }
 
     @SuppressLint("RestrictedApi")
-    @BindingAdapter("loadUserProfilePicture")
+    @BindingAdapter("terrainImage")
     public static void loadUserProfilePicture(
             ImageView imageView, String imagePath) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         if (imagePath == null || imagePath.equals(" ")) {
             Glide.with(getApplicationContext())
-                    .load(R.drawable.no_image_available)
+                    .load(R.drawable.ic_no_photo)
                     .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(0.5f)

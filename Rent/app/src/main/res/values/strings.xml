@@ -25,4 +25,41 @@
     <string name="logout">logout</string>
     <string name="profile">profile_menu</string>
     <string name="categoryPicture">cate</string>
+    <string name="make_a_reservation">Make a reservation</string>
+    <string name="choose_date_for_reservation">Choose date for reservation</string>
+    <string name="calendar_button">calendar_item</string>
+    <string name="date">10-10-2020</string>
+    <string name="choose_the_start_hour">Choose start hour</string>
+    <string name="choose_the_end_hour">Choose end hour</string>
+    <string name="start_hour">Start Hour</string>
+    <string name="end_hour">End Hour</string>
+    <string name="make_a_reservation_button">Make a reservation</string>
+    <string name="err_parsing_hour">Error on parsing hour</string>
+    <string name="please_select_working_hours">Please select hours!</string>
+    <string name="wrong_time">Wrong time</string>
+    <string name="already_added_Reservation_err_message">Already have a reservation</string>
+    <string name="no_reservations_for_weekend">No reservations for the weekend\\</string>
+    <string name="select_hour_start_button">select</string>
+    <string name="select_hour_end_button">select_end</string>
+    <string name="select_hours">Select hours</string>
+    <string name="two_points">:</string>
+    <string name="chosen_hour">Chosen hour</string>
+    <string name="_00">00</string>
+    <string name="hour">8:</string>
+    <string name="choose_hour">Choose hour</string>
+    <string name="chosen_hour1">Chosen hour:</string>
+    <string name="_08">08</string>
+    <string name="reservation_should_start_before_it_ends">Invalid time</string>
+    <string name="time_restriction">Time retriction</string>
+    <string name="make_a_reservations">Make reservation</string>
+    <string name="see_description">See description</string>
+    <string name="close_description">Close description</string>
+    <string name="no_reservations_yet">No reservations yet</string>
+    <string name="delete_reservation">delete_reservation</string>
+
+    <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

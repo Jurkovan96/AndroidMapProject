@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.rent.FireHelper;
 import com.example.rent.R;
-import com.example.rent.adapter.IconInteraction;
 import com.example.rent.adapter.SlideshowAdapter;
 import com.example.rent.databinding.ActivityMapsBinding;
 import com.example.rent.model.Location;
@@ -65,7 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private TerrainViewModel mTerrainViewModel;
 
-    private IconInteraction mIconInteraction;
 
     boolean hasTennisTerrain;
     boolean hasFootballTerrain;
@@ -267,7 +265,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 break;
             case R.id.locationDetails:
-                Intent goToLocationDetails = new Intent(this, ReservationActivity.class);
+                Intent goToLocationDetails = new Intent(this, TerrainActivity.class);
                 if (mCurrentItemReference != null) {
                     goToLocationDetails.putExtra("CURRENT_ID", mCurrentItemReference.getId());
                     startActivity(goToLocationDetails);

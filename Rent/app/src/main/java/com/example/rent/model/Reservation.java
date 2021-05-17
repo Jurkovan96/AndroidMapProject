@@ -2,10 +2,12 @@ package com.example.rent.model;
 
 import com.google.firebase.firestore.Exclude;
 
-public class Reservation {
+import java.io.Serializable;
+
+public class Reservation implements Serializable {
 
     @Exclude
-    private int id;
+    private String id;
 
     private String date;
 
@@ -13,19 +15,45 @@ public class Reservation {
 
     private String endHour;
 
-    public Reservation(String date, String startHour, String endHour) {
+    private String terrainId;
+
+    private String userId;
+
+    public String getTerrainId() {
+        return terrainId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
+    public void setTerrainId(String terrainId) {
+        this.terrainId = terrainId;
+    }
+
+    public Reservation(String date, String startHour, String endHour, String terrainId, String userId) {
         this.date = date;
         this.startHour = startHour;
         this.endHour = endHour;
+        this.terrainId = terrainId;
+        this.userId = userId;
+    }
+
+    public Reservation() {
     }
 
     @Exclude
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     @Exclude
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

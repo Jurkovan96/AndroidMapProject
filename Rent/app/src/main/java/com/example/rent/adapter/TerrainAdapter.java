@@ -9,21 +9,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rent.databinding.ItemTerrainCategoryBinding;
-import com.example.rent.model.Reservation;
 import com.example.rent.model.Terrain;
+import com.example.rent.view.TerrainDetailsActivity;
 
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
+public class TerrainAdapter extends RecyclerView.Adapter<TerrainAdapter.ViewHolder> {
 
-    public static final String VENDOR_INTENT_FIELD = "vendorIntent";
+    public static final String TERRAIN_ITEM = "terrainItem";
 
     private Context mContext;
 
     private List<Terrain> mTerrainList;
 
 
-    public CategoryAdapter(Context context, List<Terrain> userList) {
+    public TerrainAdapter(Context context, List<Terrain> userList) {
         this.mContext = context;
         this.mTerrainList = userList;
     }
@@ -60,8 +60,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             mBinding.setItemTerrain(terrain);
             mBinding.executePendingBindings();
             mBinding.cardViewContainer.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, Reservation.class);
-                intent.putExtra(VENDOR_INTENT_FIELD, mBinding.getItemTerrain());
+                Intent intent = new Intent(mContext, TerrainDetailsActivity.class);
+                intent.putExtra("TERRAIN_ITEM", mBinding.getItemTerrain());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             });

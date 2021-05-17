@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.TerrainDetailsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/toolbar" />
+
+        <TextView
+            android:id="@+id/terrain_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tool_bar"
+            tools:text="Terrain Name" />
+
+
+        <TextView
+            android:id="@+id/terrain_description"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:isScrollContainer="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/terrain_name"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent fringilla, lectus ut fermentum venenatis, odio ex semper nibh, at eleifend augue ipsum quis lorem. Praesent lobortis, magna eu tempor eleifend, ipsum quam pharetra augue, semper aliquet nisi tellus rutrum odio. Proin porta commodo nulla id scelerisque. Proin vitae neque nulla. Nam a quam eu nibh tempor pellentesque. Ut pharetra cursus eros, eu euismod orci venenatis vitae." />
+
+        <TextView
+            android:id="@+id/terrain_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/terrain_description"
+            tools:text="08:00 : 22:00" />
+
+        <TextView
+            android:id="@+id/terrain_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/terrain_hours"
+            tools:text="15lei / hour" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reservation_holder"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/view_reservations"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/terrain_price" />
+
+        <Button
+            android:id="@+id/view_reservations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/make_a_reservation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/noReservations"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/no_reservations_yet"
+            android:src="@drawable/no_image_available"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/view_reservations"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/terrain_price" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

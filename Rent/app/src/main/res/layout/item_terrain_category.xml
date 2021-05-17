@@ -44,7 +44,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:userImage="@{itemTerrain.imagePath}" />
+                    app:terrainImage="@{itemTerrain.imagePath}"
+                     />
 
             </androidx.cardview.widget.CardView>
 
@@ -54,7 +55,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:gravity="center"
-                android:text="@{itemTerrain.terrainType}" />
+                android:text="@{itemTerrain.name}"
+                />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

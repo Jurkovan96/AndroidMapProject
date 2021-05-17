@@ -11,8 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".view.TerrainDetailsActivity"></activity>
+        <activity android:name=".view.TerrainReservationActivity" />
+        <activity android:name=".view.TerrainCategoryActivity" />
         <activity android:name=".view.ProfileActivity" />
-        <activity android:name=".view.ReservationActivity" />
+        <activity android:name=".view.TerrainActivity" />
         <activity android:name=".view.RegisterActivity" />
         <activity android:name=".view.LoginActivity">
             <intent-filter>

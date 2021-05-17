@@ -36,6 +36,29 @@ public class TerrainRepository {
                         for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
                             Terrain terrain = documentSnapshot.toObject(Terrain.class);
                             if (terrain != null) {
+                                terrain.setId(documentSnapshot.getId());
+                                terrains.add(terrain);
+                            }
+                        }
+                    }
+                    terrainMutableLiveData.setValue(terrains);
+                });
+        return terrainMutableLiveData;
+    }
+
+    public MutableLiveData<List<Terrain>> getTerrainsByLocationId2(String locationId) {
+        MutableLiveData<List<Terrain>> terrainMutableLiveData = new MutableLiveData<>();
+        mFirebaseFirestore
+                .collection(LOCATION_COLLECTION)
+                .document(locationId)
+                .collection(TERRAIN_COLLECTION)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Terrain> terrains = new ArrayList<>();
+                    if (queryDocumentSnapshots != null) {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                            Terrain terrain = documentSnapshot.toObject(Terrain.class);
+                            if (terrain != null) {
                                 terrains.add(terrain);
                             }
                         }
