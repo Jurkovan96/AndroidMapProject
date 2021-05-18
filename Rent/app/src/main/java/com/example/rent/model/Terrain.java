@@ -57,6 +57,16 @@ public class Terrain implements Serializable {
         this.price = price;
     }
 
+    private String contactNumber;
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
     @Exclude
     private List<Reservation> reservations;
 

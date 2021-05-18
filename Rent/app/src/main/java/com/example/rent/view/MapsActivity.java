@@ -1,34 +1,27 @@
 package com.example.rent.view;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.rent.FireHelper;
 import com.example.rent.R;
-import com.example.rent.adapter.SlideshowAdapter;
 import com.example.rent.databinding.ActivityMapsBinding;
 import com.example.rent.model.Location;
 import com.example.rent.viewmodel.LocationViewModel;
 import com.example.rent.viewmodel.TerrainViewModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -38,6 +31,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.example.rent.ConstantsUtils.BASKET;
+import static com.example.rent.ConstantsUtils.CUSTOM;
+import static com.example.rent.ConstantsUtils.FOOTBALL;
+import static com.example.rent.ConstantsUtils.LOCATION_ID;
+import static com.example.rent.ConstantsUtils.TENNIS;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -54,8 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LocationViewModel mLocationViewModel;
 
-    private SlideshowAdapter mSlideshowAdapter;
-
     private Location mCurrentItemReference;
 
     private FirebaseAuth mFirebaseAuth;
@@ -64,10 +61,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private TerrainViewModel mTerrainViewModel;
 
-
     boolean hasTennisTerrain;
+
     boolean hasFootballTerrain;
+
     boolean hasBasketBallTerrain;
+
     boolean hasCustomTerrain;
 
     @Override
@@ -101,65 +100,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLocationObjects.clear();
             mLocationObjects.addAll(strings);
         });
-        // mLocationViewModel.addLocation(new Location("Location1", "Desc1", "rev1", 47.157859, 27.594512));
     }
 
     private void addTerrainsToLocations(Set<Location> locations) {
-        locations.forEach(location -> {
-            mTerrainViewModel
-                    .getTerrainsByLocationId(location.getId())
-                    .observe(this, location::setTerrains);
-        });
+        locations.forEach(location -> mTerrainViewModel
+                .getTerrainsByLocationId(location.getId())
+                .observe(this, location::setTerrains));
     }
 
     private void initializeCustomToolBar() {
         mActivityMapsBinding.customToolBar.logout.setOnClickListener(v -> {
             if (mFirebaseAuth.getCurrentUser() != null) {
                 mFirebaseAuth.signOut();
-                startActivity(new Intent(this, LoginActivity.class));
-                finishAffinity();
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
         mActivityMapsBinding.customToolBar.profile.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         });
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //LatLng custom = new LatLng(47.157859, 27.594512);
-        //mMap.addMarker(new MarkerOptions().position(custom).title("Custom marker").icon(getBitMapFromImage(getApplicationContext())));
-        // mMap.moveCamera(CameraUpdateFactory.newLatLng(custom));
         objectToMarkerConversion().forEach(markerOptions -> mMap.addMarker(markerOptions));
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(point -> {
-            mMap.addMarker(new MarkerOptions().position(point));
-        });
     }
 
     private Set<MarkerOptions> objectToMarkerConversion() {
         Set<MarkerOptions> markerLocations = new HashSet<>();
-        mLocations.forEach(location -> {
-            markerLocations.add(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title(location.getName()));
-        });
+        mLocations.forEach(location -> markerLocations.add(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title(location.getName())));
         return markerLocations;
     }
-
-    private BitmapDescriptor getBitMapFromImage(Context context) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_place);
-        assert vectorDrawable != null;
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -180,21 +158,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (location.getName().equals(marker.getTitle())) {
                 mCurrentItemReference = location;
                 mActivityMapsBinding.locationDescriptionTextView.setText(location.getDescription());
-                location.getTerrains().forEach(terrain -> {
-                    terrainsType.add(terrain.getTerrainType());
-                });
+                location.getTerrains().forEach(terrain -> terrainsType.add(terrain.getTerrainType()));
             }
         });
-        if (terrainsType.contains("FOOTBALL")) {
+        if (terrainsType.contains(FOOTBALL)) {
             hasFootballTerrain = true;
         }
-        if (terrainsType.contains("BASKETBALL")) {
+        if (terrainsType.contains(BASKET)) {
             hasBasketBallTerrain = true;
         }
-        if (terrainsType.contains("TENNIS")) {
+        if (terrainsType.contains(TENNIS)) {
             hasTennisTerrain = true;
         }
-        if (terrainsType.contains("CUSTOM")) {
+        if (terrainsType.contains(CUSTOM)) {
             hasCustomTerrain = true;
         }
 
@@ -218,36 +194,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             mActivityMapsBinding.locationCustomTerrain.setVisibility(View.VISIBLE);
         }
-
-
-        //final ViewPager viewPager_images = mActivityMapsBinding.viewPager;
-
-//        mLocations.forEach(location -> {
-//            if (location.getName().equals(marker.getTitle())) {
-//                mCurrentItemReference = location;
-//                mSlideshowAdapter = new SlideshowAdapter(this, populateImageList(location));
-//                viewPager_images.setAdapter(mSlideshowAdapter);
-//                populateImageList(location);
-//                Handler mHandler = new Handler();
-//                Runnable mRunnable = () -> {
-//                    int item = viewPager_images.getCurrentItem();
-//                    if (item == mSlideshowAdapter.mImages.size() - 1) {
-//                        item = 0;
-//                    } else {
-//                        item++;
-//                    }
-//                    viewPager_images.setCurrentItem(item, true);
-//                };
-//                Timer mTimer = new Timer();
-//                mTimer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        mHandler.post(mRunnable);
-//                    }
-//                }, 5000, 5000);
-//            }
-//        });
-
         return false;
     }
 
@@ -267,28 +213,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.locationDetails:
                 Intent goToLocationDetails = new Intent(this, TerrainActivity.class);
                 if (mCurrentItemReference != null) {
-                    goToLocationDetails.putExtra("CURRENT_ID", mCurrentItemReference.getId());
+                    goToLocationDetails.putExtra(LOCATION_ID, mCurrentItemReference.getId());
                     startActivity(goToLocationDetails);
                 } else {
-                    Log.d(TAG, "null reference on click!");
+                    Log.d(TAG, getString(R.string.null_reference));
                 }
                 break;
-
         }
-    }
-
-    private ArrayList<String> populateImageList(Location location) {
-        ArrayList<String> locationImages = new ArrayList<>();
-        if (location.getImageList().size() == 0 || location.getImageList() == null) {
-            locationImages.add(String.valueOf(R.drawable.no_image_available));
-        } else {
-            locationImages.addAll(location.getImageList());
-        }
-        return locationImages;
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
     }
 }

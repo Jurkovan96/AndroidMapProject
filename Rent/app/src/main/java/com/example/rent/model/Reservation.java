@@ -19,6 +19,9 @@ public class Reservation implements Serializable {
 
     private String userId;
 
+    private String terrainName;
+
+
     public String getTerrainId() {
         return terrainId;
     }
@@ -36,12 +39,22 @@ public class Reservation implements Serializable {
         this.terrainId = terrainId;
     }
 
-    public Reservation(String date, String startHour, String endHour, String terrainId, String userId) {
+    public Reservation(String date, String startHour, String endHour, String terrainId, String userId,
+                       String terrainName) {
         this.date = date;
+        this.terrainName = terrainName;
         this.startHour = startHour;
         this.endHour = endHour;
         this.terrainId = terrainId;
         this.userId = userId;
+    }
+
+    public String getTerrainName() {
+        return terrainName;
+    }
+
+    public void setTerrainName(String terrainName) {
+        this.terrainName = terrainName;
     }
 
     public Reservation() {

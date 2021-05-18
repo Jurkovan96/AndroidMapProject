@@ -61,7 +61,7 @@ public class TerrainAdapter extends RecyclerView.Adapter<TerrainAdapter.ViewHold
             mBinding.executePendingBindings();
             mBinding.cardViewContainer.setOnClickListener(view -> {
                 Intent intent = new Intent(mContext, TerrainDetailsActivity.class);
-                intent.putExtra("TERRAIN_ITEM", mBinding.getItemTerrain());
+                intent.putExtra(TERRAIN_ITEM, mBinding.getItemTerrain());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             });

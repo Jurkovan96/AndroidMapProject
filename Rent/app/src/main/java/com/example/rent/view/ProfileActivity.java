@@ -29,7 +29,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mActivityProfileBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
         mFirebaseAuth = FireHelper.getInstanceOfAuth();
-        //initializeCustomToolBar();
         setUpToolbar();
     }
 

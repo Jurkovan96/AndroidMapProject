@@ -24,17 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.rent.ConstantsUtils.INVALID_PASSWORD;
+import static com.example.rent.ConstantsUtils.IS_NEW_USER;
+import static com.example.rent.ConstantsUtils.SPECIAL_CHAR_EXCEPTION;
+
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = RegisterActivity.class.getName();
 
     private List<String> mUserNameList;
-
-    public static final String IS_NEW_USER = "isNewUser";
-
-    private static final String SPECIAL_CHAR_EXCEPTION = "User name cannot contain the following: + $ @ %";
-
-    public static final String INVALID_PASSWORD = "Invalid password";
 
     private ActivityRegisterBinding mRegisterBinding;
 
@@ -81,15 +79,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void createUser(final String email, final String name, final String password) {
-        mFirebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String uid = Objects.requireNonNull(mFirebaseAuth.getCurrentUser()).getUid();
-                User user = new User(uid, name, email, password);
-                userViewModel.createUser(user);
+        mFirebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String uid = Objects.requireNonNull(mFirebaseAuth.getCurrentUser()).getUid();
+                        User user = new User(uid, name, email, password);
+                        userViewModel.createUser(user);
 
-            }
-        }).addOnFailureListener(e -> Log.e(TAG, "Something went wrong" + e));
-
+                    }
+                }).addOnFailureListener(e -> Log.e(TAG, "Something went wrong" + e));
         Intent goToLoginPageIntent = new Intent(RegisterActivity.this, LoginActivity.class);
         goToLoginPageIntent.putExtra(IS_NEW_USER, true);
         startActivity(goToLoginPageIntent);

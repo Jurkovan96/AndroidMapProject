@@ -10,10 +10,6 @@
         android:layout_height="match_parent"
         android:background="@color/gray">
 
-        <include
-            android:id="@+id/tool_bar"
-            layout="@layout/toolbar" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -70,8 +66,8 @@
                         android:layout_marginTop="4dp"
                         android:hint="@string/date"
                         android:textColor="@color/black"
-                        android:textSize="17sp"
                         android:textColorHint="@color/black"
+                        android:textSize="17sp"
                         app:layout_constraintEnd_toEndOf="@id/textView_Date"
                         app:layout_constraintStart_toStartOf="@id/textView_Date"
                         app:layout_constraintTop_toBottomOf="@id/button_calendarDate"
@@ -207,13 +203,13 @@
                         android:clickable="true"
                         android:contentDescription="@string/select_hour_end_button"
                         android:focusable="true"
+                        android:gravity="center_horizontal"
                         android:src="@drawable/ic_baseline_schedule_24"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toTopOf="@id/endHour_TV"
                         app:layout_constraintEnd_toEndOf="@id/endHour_TV"
                         app:layout_constraintStart_toStartOf="@id/endHour_TV"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:gravity="center_horizontal" />
+                        app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

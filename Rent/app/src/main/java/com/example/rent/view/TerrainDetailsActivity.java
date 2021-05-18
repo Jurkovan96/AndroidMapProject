@@ -20,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.example.rent.ConstantsUtils.TERRAIN_ITEM;
 
 public class TerrainDetailsActivity extends AppCompatActivity implements ReservationAdapter.DeleteItem {
 
@@ -40,10 +43,10 @@ public class TerrainDetailsActivity extends AppCompatActivity implements Reserva
         mReservationList = new ArrayList<>();
         mReservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
         FirebaseAuth firebaseAuth = FireHelper.getInstanceOfAuth();
-        mUserId = firebaseAuth.getCurrentUser().getUid();
+        mUserId = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
         Intent intent = this.getIntent();
-        if (intent.hasExtra("TERRAIN_ITEM")) {
-            Terrain terrain = (Terrain) intent.getSerializableExtra("TERRAIN_ITEM");
+        if (intent.hasExtra(TERRAIN_ITEM)) {
+            Terrain terrain = (Terrain) intent.getSerializableExtra(TERRAIN_ITEM);
             mReservationViewModel
                     .getAllReservationsByTerrainId(terrain.getId())
                     .observe(this, reservations -> {
@@ -56,15 +59,15 @@ public class TerrainDetailsActivity extends AppCompatActivity implements Reserva
         }
 
     }
-
     private void initPageComponents(Terrain terrain) {
         mActivityTerrainDetailsBinding.terrainName.setText(terrain.getName());
         mActivityTerrainDetailsBinding.terrainDescription.setText(terrain.getDescription());
         mActivityTerrainDetailsBinding.terrainHours.setText(terrain.getHours());
         mActivityTerrainDetailsBinding.terrainPrice.setText(String.valueOf(terrain.getPrice()).concat("  ron/hour"));
+        mActivityTerrainDetailsBinding.terrainContact.setText(terrain.getContactNumber());
         mActivityTerrainDetailsBinding.viewReservations.setOnClickListener(v -> {
             Intent intent = new Intent(this, TerrainReservationActivity.class);
-            intent.putExtra("TERRAIN_OBJECT", terrain);
+            intent.putExtra(TERRAIN_ITEM, terrain);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });

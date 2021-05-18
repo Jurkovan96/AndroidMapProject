@@ -1,13 +1,5 @@
 package com.example.rent.view;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -20,6 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.rent.FireHelper;
 import com.example.rent.R;
 import com.example.rent.adapter.TimePickerRecyclerAdapter;
@@ -31,7 +31,6 @@ import com.example.rent.viewmodel.ReservationViewModel;
 import com.google.firebase.BuildConfig;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -42,26 +41,29 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
-import static com.example.rent.ConstantsUtils.sUserGlobalModel;
+import static com.example.rent.ConstantsUtils.DAY;
+import static com.example.rent.ConstantsUtils.DMY_FORMAT;
+import static com.example.rent.ConstantsUtils.EMPTY_SPACE;
+import static com.example.rent.ConstantsUtils.ERROR_MESSAGE;
+import static com.example.rent.ConstantsUtils.HOURS_LIST_START;
+import static com.example.rent.ConstantsUtils.MINUTES_LIST;
+import static com.example.rent.ConstantsUtils.SPACE;
+import static com.example.rent.ConstantsUtils.TERRAIN_ITEM;
+import static com.example.rent.ConstantsUtils.TIMESTAMP_FORMAT_DATE;
+import static com.example.rent.ConstantsUtils.TIME_FORMAT_RESERVATION_HOUR;
+import static com.example.rent.ConstantsUtils.TWO_POINTS;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class TerrainReservationActivity extends AppCompatActivity {
 
-    public static final String TIME_FORMAT_RESERVATION_HOUR = "HH:mm";
-    private static final String SPACE = " ";
-    private static final String EMPTY_SPACE = "";
-    private static final String ERROR_MESSAGE = "Error message";
-    public static final String TIMESTAMP_FORMAT_DATE = "dd/MM/yyyy";
-    public static final String DMY_FORMAT = "%d/%d/%d";
-    public static final long DAY = 1000 * 60 * 60 * 24;
+    public static final String TAG = TerrainReservationActivity.class.getName();
 
     private ActivityTerrainReservationBinding mActivityTerrainReservationBinding;
 
     private DatePickerDialog mDatePickerDialog;
 
-
-    public static final String TWO_POINTS = " : ";
     private boolean mIsWeekend = false;
 
     private boolean mCanReserve = true;
@@ -92,11 +94,6 @@ public class TerrainReservationActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
 
-    private static final String[] HOURS_LIST_START = new String[]{"08", "09", "10", "11", "12", "13", "14",
-            "15", "16", "17", "18"};
-
-    private static final String[] MINUTES_LIST = new String[]{"00", "30"};
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +103,17 @@ public class TerrainReservationActivity extends AppCompatActivity {
         mReservations = new ArrayList<>();
         mFirebaseAuth = FireHelper.getInstanceOfAuth();
         Intent intent = this.getIntent();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        System.out.println("-----------------> user " + userId);
-        if (intent.hasExtra("TERRAIN_OBJECT")) {
-            mTerrain = (Terrain) intent.getSerializableExtra("TERRAIN_OBJECT");
+        Calendar calendar = Calendar.getInstance();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerDayPicker(calendar);
+        }
+        registerStartTimePicker();
+        registerEndTimePicker();
+        mCurrentTime = Calendar.getInstance().getTime();
+
+        if (intent.hasExtra(TERRAIN_ITEM)) {
+            mTerrain = (Terrain) intent.getSerializableExtra(TERRAIN_ITEM);
             mReservationViewModel = new ViewModelProvider(this).get(ReservationViewModel.class);
             mReservationViewModel.getAllReservationsByTerrainId(mTerrain.getId())
                     .observe(this, reservations -> {
@@ -118,17 +122,7 @@ public class TerrainReservationActivity extends AppCompatActivity {
                         setReservationButton();
                     });
         }
-
-        Calendar calendar = Calendar.getInstance();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerDayPicker(calendar);
-        }
-
-        registerStartTimePicker();
-        registerEndTimePicker();
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void registerDayPicker(Calendar calendar) {
@@ -159,7 +153,7 @@ public class TerrainReservationActivity extends AppCompatActivity {
                     }
                 } catch (ParseException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.e("TAG", ERROR_MESSAGE + e);
+                        Log.e(TAG, ERROR_MESSAGE + e);
                     }
                 }
             }, year, month, day);
@@ -172,7 +166,6 @@ public class TerrainReservationActivity extends AppCompatActivity {
         });
     }
 
-
     @SuppressLint("SetTextI18n")
     public void registerStartTimePicker() {
         mActivityTerrainReservationBinding.buttonHourStart.setOnClickListener(v -> {
@@ -183,12 +176,10 @@ public class TerrainReservationActivity extends AppCompatActivity {
                             null, false);
             timePickerCustomDialog.setContentView(timePickerCustomLayoutBinding.getRoot());
             timePickerCustomDialog.show();
-            //set up minutes recycler view
             LinearLayoutManager minutesLinearLayout = new LinearLayoutManager(this);
             timePickerCustomLayoutBinding.rvMinutes.setLayoutManager(minutesLinearLayout);
             mMinutesAdapter = new TimePickerRecyclerAdapter(Arrays.asList(MINUTES_LIST));
             timePickerCustomLayoutBinding.rvMinutes.setAdapter(mMinutesAdapter);
-            //set up hours recycler view
             LinearLayoutManager hoursLinearLayout = new LinearLayoutManager(this);
             timePickerCustomLayoutBinding.rvHours.setLayoutManager(hoursLinearLayout);
             List<String> startHours = new ArrayList<>(Arrays.asList(HOURS_LIST_START));
@@ -245,18 +236,16 @@ public class TerrainReservationActivity extends AppCompatActivity {
                             null, false);
             timePickerCustomDialog.setContentView(timePickerCustomLayoutBindingEnd.getRoot());
             timePickerCustomDialog.show();
-            //set up minutes recycler view
             LinearLayoutManager minutesLinearLayout = new LinearLayoutManager(this);
             timePickerCustomLayoutBindingEnd.rvMinutes.setLayoutManager(minutesLinearLayout);
             mMinutesAdapter = new TimePickerRecyclerAdapter(Arrays.asList(MINUTES_LIST));
             timePickerCustomLayoutBindingEnd.rvMinutes.setAdapter(mMinutesAdapter);
-            //set up hours recycler view for the end hour
             for (int i = 0; i < HOURS_LIST_START.length; i++) {
                 int value = Integer.parseInt(HOURS_LIST_START[i]);
                 if (mStartHour == Integer.parseInt(HOURS_LIST_START[HOURS_LIST_START.length - 1])) {
                     mPosition = 0;
                 } else if (value == mStartHour
-                        && Integer.parseInt(HOURS_LIST_START[i + 0]) != 1) {
+                        && Integer.parseInt(HOURS_LIST_START[i]) != 1) {
                     mPosition = i + 1;
                 }
             }
@@ -344,9 +333,15 @@ public class TerrainReservationActivity extends AppCompatActivity {
                     .equals(EMPTY_SPACE)) {
                 Toast.makeText(this, R.string.choose_date_for_reservation, Toast.LENGTH_SHORT).show();
                 return;
+            } else if (mActivityTerrainReservationBinding.startHourTV.getText().toString().isEmpty()) {
+                Toast.makeText(this, R.string.start_hour, Toast.LENGTH_SHORT).show();
+                return;
+            } else if (mActivityTerrainReservationBinding.endHourTV.getText().toString().isEmpty()) {
+                Toast.makeText(this, R.string.end_hour, Toast.LENGTH_SHORT).show();
+                return;
             }
             for (Reservation reservation : mReservations) {
-                if (reservation.getUserId().equals(mFirebaseAuth.getCurrentUser().getUid()) &&
+                if (reservation.getUserId().equals(Objects.requireNonNull(mFirebaseAuth.getCurrentUser()).getUid()) &&
                         reservation.getDate()
                                 .equals(mActivityTerrainReservationBinding.textViewChosenDate.getText().toString())) {
                     try {
@@ -401,18 +396,36 @@ public class TerrainReservationActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.reservation_should_start_before_it_ends,
                         Toast.LENGTH_SHORT).show();
             } else {
+                mReservations.forEach(reservation -> {
+                    if (reservation.getStartHour().equals(mActivityTerrainReservationBinding.startHourTV.getText().toString()) &&
+                            reservation.getDate().equals(mActivityTerrainReservationBinding.textViewChosenDate.getText().toString())
+                            && !checkIntervalBetweenHours(mActivityTerrainReservationBinding.startHourTV.getText().toString(),
+                            mActivityTerrainReservationBinding.endHourTV.getText().toString())) {
+                        mCanReserve = false;
+                    }
+                    if (reservation.getEndHour().equals(mActivityTerrainReservationBinding.endHourTV.getText().toString()) &&
+                            reservation.getDate().equals(mActivityTerrainReservationBinding.textViewChosenDate.getText().toString())
+                            && !checkIntervalBetweenHours(mActivityTerrainReservationBinding.startHourTV.getText().toString(),
+                            mActivityTerrainReservationBinding.endHourTV.getText().toString())) {
+                        mCanReserve = false;
+                    }
+                });
+                if (mCanReserve) {
+                    Reservation reservation = new Reservation(
+                            mActivityTerrainReservationBinding.textViewChosenDate.getText().toString(),
+                            mActivityTerrainReservationBinding.startHourTV.getText().toString(),
+                            mActivityTerrainReservationBinding.endHourTV.getText().toString(),
+                            mTerrain.getId(), Objects.requireNonNull(mFirebaseAuth.getCurrentUser()).getUid(),
+                            mTerrain.getName());
 
-                Reservation reservation = new Reservation(
-                        mActivityTerrainReservationBinding.textViewChosenDate.getText().toString(),
-                        mActivityTerrainReservationBinding.startHourTV.getText().toString(),
-                        mActivityTerrainReservationBinding.endHourTV.getText().toString(),
-                        mTerrain.getId(), mFirebaseAuth.getCurrentUser().getUid());
-
-                mReservationViewModel.addReservation(reservation);
-                Intent intent = new Intent(this, TerrainDetailsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("TERRAIN_ITEM", mTerrain);
-                startActivity(intent);
+                    mReservationViewModel.addReservation(reservation);
+                    Intent intent = new Intent(this, TerrainDetailsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(TERRAIN_ITEM, mTerrain);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Reservation already added!", Toast.LENGTH_SHORT).show();
+                }
             }
             mCanReserve = true;
         });

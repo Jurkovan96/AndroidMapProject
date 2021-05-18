@@ -12,8 +12,6 @@ import java.util.List;
 
 public class ReservationRepository {
 
-    public static final String TAG = ReservationRepository.class.getName();
-
     public static final String RESERVATION_COLLECTION = "Reservations";
 
     private final FirebaseFirestore mFirebaseFirestore;

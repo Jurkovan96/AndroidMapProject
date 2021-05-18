@@ -28,11 +28,11 @@
     <string name="make_a_reservation">Make a reservation</string>
     <string name="choose_date_for_reservation">Choose date for reservation</string>
     <string name="calendar_button">calendar_item</string>
-    <string name="date">10-10-2020</string>
+    <string name="date">10/10/2020</string>
     <string name="choose_the_start_hour">Choose start hour</string>
     <string name="choose_the_end_hour">Choose end hour</string>
-    <string name="start_hour">Start Hour</string>
-    <string name="end_hour">End Hour</string>
+    <string name="start_hour">Please choose start hour!</string>
+    <string name="end_hour">Please choose end hour!</string>
     <string name="make_a_reservation_button">Make a reservation</string>
     <string name="err_parsing_hour">Error on parsing hour</string>
     <string name="please_select_working_hours">Please select hours!</string>
@@ -56,6 +56,12 @@
     <string name="close_description">Close description</string>
     <string name="no_reservations_yet">No reservations yet</string>
     <string name="delete_reservation">delete_reservation</string>
+    <string name="null_reference">null reference on click!</string>
+    <string name="open_between">Open between :</string>
+    <string name="price_per_hour">Price per hour :</string>
+    <string name="contact_number">Contact number :</string>
+    <string name="there_are_no_reservations">There are no reservations!</string>
+
 
     <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/black</item>
